@@ -1,7 +1,7 @@
 import requests
 
 cookies = {
-    '64b89d05a4a7cf540e8cd068c2904eaf': 'cb909e6e644f285540b186469a77ef9a',
+    '64b89d05a4a7cf540e8cd068c2904eaf': '5a7e58c35f6d5828cf0cc237cd66fbd3',
 }
 
 headers = {
@@ -9,19 +9,20 @@ headers = {
     'Accept-Language': 'en-GB,en;q=0.9',
     'Connection': 'keep-alive',
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    # 'Cookie': '64b89d05a4a7cf540e8cd068c2904eaf=cb909e6e644f285540b186469a77ef9a',
+    # 'Cookie': '64b89d05a4a7cf540e8cd068c2904eaf=5a7e58c35f6d5828cf0cc237cd66fbd3',
     'Origin': 'http://dgdagov.info',
-    'Referer': 'http://dgdagov.info/index.php/registered-products/ayurvedic',
+    'Referer': 'http://dgdagov.info/index.php/registered-products/herbal',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
     'X-Requested-With': 'XMLHttpRequest',
 }
-def fetchData1(n):
+
+def fetchData(n):
     data = {
-        'sEcho': '2',
+        'sEcho': '1',
         'iColumns': '6',
         'sColumns': '',
-        'iDisplayStart': f'{n*25}',
-        'iDisplayLength': '25',
+        'iDisplayStart': f'{n*100}',
+        'iDisplayLength': '100',
         'mDataProp_0': '0',
         'mDataProp_1': '1',
         'mDataProp_2': '2',
@@ -60,7 +61,7 @@ def fetchData1(n):
         'action': 'getDrugOthersCompanyDatabaseData',
         'FilterAll': '4',
         'FilterItem': '',
-        'ManufacturerCategory': 'A',
+        'ManufacturerCategory': 'H',
     }
 
     response = requests.post(
@@ -70,25 +71,15 @@ def fetchData1(n):
         data=data,
         verify=False,
     )
-    response_content = response.text
-    
-    escaped_content = response_content.replace('\\', '\\\\')
-    
-    # Parsing JSON content
-    try:
-        parsed_response = json.loads(escaped_content)
-        return parsed_response['aaData']
-    except json.JSONDecodeError as e:
-        return print("JSON Decode Error:", e)
-
-    # return response.json()['aaData']
+    return response.json()['aaData']
 
 fetchedData = []
 
 from tqdm import tqdm
 import json
-for i in tqdm(range(207)):
-    fetchedData.extend(fetchData1(i))
+for i in tqdm(range(9)):
+    print(fetchData(i))
+    fetchedData.extend(fetchData(i))
 
-with open("ayurvedicDrugData.json", "w") as f:
+with open("herbalDrugData.json", "w") as f:
     f.write(json.dumps(fetchedData))
